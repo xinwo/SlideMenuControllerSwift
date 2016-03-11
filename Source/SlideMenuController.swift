@@ -204,13 +204,13 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
     public override func closeLeft() {
         leftViewController?.beginAppearanceTransition(isLeftHidden(), animated: true)
         closeLeftWithVelocity(0.0)
-        setCloseWindowLebel()
+        setCloseWindowLevel()
     }
     
     public override func closeRight() {
         rightViewController?.beginAppearanceTransition(isRightHidden(), animated: true)
         closeRightWithVelocity(0.0)
-        setCloseWindowLebel()
+        setCloseWindowLevel()
     }
     
     
@@ -274,7 +274,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
         }
     }
     
-    public func isTagetViewController() -> Bool {
+    public func isTargetViewController() -> Bool {
         // Function to determine the target ViewController
         // Please to override it if necessary
         return true
@@ -295,7 +295,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
     
     func handleLeftPanGesture(panGesture: UIPanGestureRecognizer) {
         
-        if !isTagetViewController() {
+        if !isTargetViewController() {
             return
         }
         
@@ -346,7 +346,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
                         leftViewController?.beginAppearanceTransition(false, animated: true)
                     }
                     closeLeftWithVelocity(panInfo.velocity)
-                    setCloseWindowLebel()
+                    setCloseWindowLevel()
                     
                     track(.FlickClose)
 
@@ -368,7 +368,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
     
     func handleRightPanGesture(panGesture: UIPanGestureRecognizer) {
         
-        if !isTagetViewController() {
+        if !isTargetViewController() {
             return
         }
         
@@ -418,7 +418,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
                     rightViewController?.beginAppearanceTransition(false, animated: true)
                 }
                 closeRightWithVelocity(panInfo.velocity)
-                setCloseWindowLebel()
+                setCloseWindowLevel()
             }
         case UIGestureRecognizerState.Failed, UIGestureRecognizerState.Possible:
             break
@@ -550,7 +550,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
     public override func toggleLeft() {
         if isLeftOpen() {
             closeLeft()
-            setCloseWindowLebel()
+            setCloseWindowLevel()
             // closeMenuはメニュータップ時にも呼ばれるため、closeタップのトラッキングはここに入れる
             
             track(.TapClose)
@@ -570,7 +570,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
     public override func toggleRight() {
         if isRightOpen() {
             closeRight()
-            setCloseWindowLebel()
+            setCloseWindowLevel()
         } else {
             openRight()
         }
@@ -807,7 +807,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
         }
     }
     
-    private func setCloseWindowLebel() {
+    private func setCloseWindowLevel() {
         if (SlideMenuOptions.hideStatusBar) {
             dispatch_async(dispatch_get_main_queue(), {
                 if let window = UIApplication.sharedApplication().keyWindow {
@@ -837,7 +837,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
     }
     
     public func closeLeftNonAnimation(){
-        setCloseWindowLebel()
+        setCloseWindowLevel()
         let finalXOrigin: CGFloat = leftMinOrigin()
         var frame: CGRect = leftContainerView.frame;
         frame.origin.x = finalXOrigin
@@ -849,7 +849,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
     }
     
     public func closeRightNonAnimation(){
-        setCloseWindowLebel()
+        setCloseWindowLevel()
         let finalXOrigin: CGFloat = CGRectGetWidth(view.bounds)
         var frame: CGRect = rightContainerView.frame
         frame.origin.x = finalXOrigin
