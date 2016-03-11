@@ -40,6 +40,11 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
         case FlickClose
     }
     
+    public enum OpenMode {
+        case Position
+        case Scale
+    }
+    
     
     struct PanInfo {
         var action: SlideAction
@@ -58,6 +63,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
     public var rightViewController: UIViewController?
     public var rightPanGesture: UIPanGestureRecognizer?
     public var rightTapGesture: UITapGestureRecognizer?
+    public var openMode = OpenMode.Scale
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -248,12 +254,16 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
         }
     }
     
-    public func removeLeftGestures() {
+    public func removeLeftPanGestures() {
         
         if leftPanGesture != nil {
             view.removeGestureRecognizer(leftPanGesture!)
             leftPanGesture = nil
         }
+    }
+
+    public func removeLeftGestures() {
+        removeLeftPanGestures()
         
         if leftTapGesture != nil {
             view.removeGestureRecognizer(leftTapGesture!)
@@ -325,7 +335,12 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
                 let translation: CGPoint = panGesture.translationInView(panGesture.view!)
                 leftContainerView.frame = applyLeftTranslation(translation, toFrame: LeftPanState.frameAtStartOfPan)
                 applyLeftOpacity()
-                applyLeftContentViewScale()
+                switch openMode {
+                case .Position:
+                    applyLeftContentViewPosition()
+                case .Scale:
+                    applyLeftContentViewScale()
+                }
             case UIGestureRecognizerState.Ended, UIGestureRecognizerState.Cancelled:
                 if LeftPanState.lastState != .Changed {
                     return
@@ -446,7 +461,12 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
             if let strongSelf = self {
                 strongSelf.leftContainerView.frame = frame
                 strongSelf.opacityView.layer.opacity = Float(SlideMenuOptions.contentViewOpacity)
-                strongSelf.mainContainerView.transform = CGAffineTransformMakeScale(SlideMenuOptions.contentViewScale, SlideMenuOptions.contentViewScale)
+                switch strongSelf.openMode {
+                case .Position:
+                    strongSelf.mainContainerView.transform = CGAffineTransformMakeTranslation(frame.size.width, 0)
+                case .Scale:
+                    strongSelf.mainContainerView.transform = CGAffineTransformMakeScale(SlideMenuOptions.contentViewScale, SlideMenuOptions.contentViewScale)
+                }
             }
             }) { [weak self](Bool) -> Void in
                 if let strongSelf = self {
@@ -505,7 +525,12 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
             if let strongSelf = self {
                 strongSelf.leftContainerView.frame = frame
                 strongSelf.opacityView.layer.opacity = 0.0
-                strongSelf.mainContainerView.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                switch strongSelf.openMode {
+                case .Position:
+                    strongSelf.mainContainerView.transform = CGAffineTransformIdentity
+                case .Scale:
+                    strongSelf.mainContainerView.transform = CGAffineTransformMakeScale(1.0, 1.0)
+                }
             }
             }) { [weak self](Bool) -> Void in
                 if let strongSelf = self {
@@ -753,6 +778,11 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
         let openedRightRatio: CGFloat = getOpenedRightRatio()
         let opacity: CGFloat = SlideMenuOptions.contentViewOpacity * openedRightRatio
         opacityView.layer.opacity = Float(opacity)
+    }
+    
+    private func applyLeftContentViewPosition() {
+        mainContainerView.transform = CGAffineTransformMakeTranslation(
+            leftContainerView.frame.size.width, 0)
     }
     
     private func applyLeftContentViewScale() {
