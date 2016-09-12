@@ -18,25 +18,25 @@ class NonMenuController: UIViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         self.removeNavigationBarItem()
     }
   
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        coordinator.animate(alongsideTransition: nil, completion: { (context: UIViewControllerTransitionCoordinatorContext!) -> Void in
+    override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        coordinator.animateAlongsideTransition(nil, completion: { (context: UIViewControllerTransitionCoordinatorContext!) -> Void in
             guard let vc = (self.slideMenuController()?.mainViewController as? UINavigationController)?.topViewController else {
                 return
             }
-            if vc.isKind(of: NonMenuController.self)  {
+            if vc.isKindOfClass(NonMenuController)  {
                 self.slideMenuController()?.removeLeftGestures()
                 self.slideMenuController()?.removeRightGestures()
             }
         })
     }
   
-    @IBAction func didTouchToMain(_ sender: UIButton) {
-        delegate?.changeViewController(LeftMenu.main)
+    @IBAction func didTouchToMain(sender: UIButton) {
+        delegate?.changeViewController(LeftMenu.Main)
     }
 }
