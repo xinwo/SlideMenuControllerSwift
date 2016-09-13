@@ -298,6 +298,14 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
         }
     }
     
+   	public func removeLeftPanGestures() {
+        
+        if leftPanGesture != nil {
+            view.removeGestureRecognizer(leftPanGesture!)
+            leftPanGesture = nil
+        }
+    }
+
     public func removeLeftGestures() {
         
         if leftPanGesture != nil {
@@ -381,7 +389,7 @@ public class SlideMenuController: UIViewController, UIGestureRecognizerDelegate 
                 let translation: CGPoint = panGesture.translationInView(panGesture.view!)
                 leftContainerView.frame = applyLeftTranslation(translation, toFrame: LeftPanState.frameAtStartOfPan)
                 applyLeftOpacity()
-                applyLeftContentViewScale()
+                    applyLeftContentViewScale()
             case UIGestureRecognizerState.Ended, UIGestureRecognizerState.Cancelled:
                 if LeftPanState.lastState != .Changed {
                     setCloseWindowLevel()
